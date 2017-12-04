@@ -24,4 +24,4 @@ yarn-error.log*
 
 .directory
 
-/src/constStrings.json
+src/constStrings.json

@@ -1,0 +1,91 @@
+body {
+    background-color: #222222;
+}
+
+.armedStatus {
+    color: whitesmoke;
+}
+
+.armedStatusText {
+    text-align: center;
+    font-size: 220px;
+    padding-right: 3px;
+    font-family: 'Roboto', sans-serif;
+}
+
+.arm {
+    text-align: center;
+    width: 50%;
+    background-color: #0e9030;
+    border-bottom-left-radius: 10px;
+    border-top-left-radius: 10px;
+}
+
+.arm:hover {
+    background-color: #0ebe39;
+}
+
+.disarm {
+    text-align: center;
+    width: 50%;
+    background-color: #a33c3e;
+    border-bottom-right-radius: 10px;
+    border-top-right-radius: 10px;
+}
+
+.disarm:hover {
+    background-color: #ca413c;
+}
+
+.armedStatus.alarm {
+    background-color: #d6882d;
+    border-radius: 10px;
+}
+
+.armedStatus.armed {
+    background-color: #0e9030;
+    border-radius: 10px;
+}
+
+.armedStatus.not_armed {
+    background-color: #a33c3e;
+    border-radius: 10px;
+}
+
+.lightStatusText {
+    text-align: center;
+    padding-right: 3px;
+    color: whitesmoke;
+}
+
+.doorAndLockStatusText {
+    color: whitesmoke;
+}
+
+.motionStatusText {
+    color: whitesmoke;
+}
+
+.temperature {
+    background-color: #006f99;
+    border-radius: 10px;
+    color: whitesmoke;
+}
+
+.log {
+    font-family: 'Roboto Mono', monospace;
+    font-size: 14px;
+    margin: 10px;
+    margin-top: 5px;
+    background-color: #333333;
+    overflow: auto;
+    text-align: left;
+    color: whitesmoke;
+}
+
+.logTitle {
+    font-size: 27px;
+    color: whitesmoke;
+    padding-top: 5px;
+    text-align: center;
+}

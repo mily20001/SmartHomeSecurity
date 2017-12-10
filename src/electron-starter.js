@@ -22,7 +22,7 @@ function createWindow () {
     //     slashes: true
     // }))
 
-    console.log(process.env.ELECTRON_START_URL);
+    // console.log(process.env.ELECTRON_START_URL);
 
     const startUrl = process.env.ELECTRON_START_URL || url.format({
             pathname: path.join(__dirname, '/../build/index.html'),
@@ -33,7 +33,7 @@ function createWindow () {
 
 
     // Open the DevTools.
-    mainWindow.webContents.openDevTools()
+    // mainWindow.webContents.openDevTools()
 
     // Emitted when the window is closed.
     mainWindow.on('closed', function () {

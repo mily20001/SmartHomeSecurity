@@ -1,0 +1,24 @@
+.header {
+    background-color: #474747;
+    border-bottom: solid whitesmoke 1px;
+    width: 100%;
+    height: 100px;
+    font-family: 'Roboto', sans-serif;
+    text-align: center;
+    color: whitesmoke;
+}
+.headerTitle {
+    font-size: 50px;
+    height: 50px;
+    margin-bottom: 12px;
+}
+.headerStatus {
+    font-size: 18px;
+    height: 25px;
+}
+.ok {
+    color: #0ebe39;
+}
+.notOk {
+    color: #ca413c;
+}

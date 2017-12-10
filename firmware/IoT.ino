@@ -4,11 +4,12 @@
 #include <DallasTemperature.h>
 #include "const_strings.h"
 
-#define PIR_PIN 13
-#define ONE_WIRE_BUS 12
+#define PIR_PIN 12
+#define ONE_WIRE_BUS 14
 #define DOOR_BUTTON_PIN 5
 #define LOCK_BUTTON_PIN 4
-#define BUZZER_PIN 14
+#define BUZZER_PIN 13
+#define LED_PIN 15
 
 #define BUZZER_ON digitalWrite(BUZZER_PIN, LOW)
 #define BUZZER_OFF digitalWrite(BUZZER_PIN, HIGH);
@@ -25,16 +26,13 @@ const char* mqtt_server = MQTT_URL;
 WiFiClient espClient;
 PubSubClient client(espClient);
 long lastMsg = 0;
-char msg[50];
+char msg[70];
 int value = 0;
 bool alarm_armed = false;
 
 void setup() {
   pinMode(BUILTIN_LED, OUTPUT);
   Serial.begin(115200);
-  setup_wifi();
-  client.setServer(mqtt_server, 1883);
-  client.setCallback(callback);
 
   sensors.begin();
 
@@ -44,11 +42,19 @@ void setup() {
   pinMode(PIR_PIN, INPUT);
   digitalWrite(PIR_PIN, LOW);
 
+  setup_wifi();
+  client.setServer(mqtt_server, 1883);
+  client.setCallback(callback);
+
   pinMode(BUZZER_PIN, OUTPUT);
+  pinMode(LED_PIN, OUTPUT);
+  digitalWrite(LED_PIN, HIGH);
   BUZZER_ON;
 
   delay(250);
   BUZZER_OFF;
+
+  
   
 }
 
@@ -70,6 +76,9 @@ void setup_wifi() {
   Serial.println("WiFi connected");
   Serial.println("IP address: ");
   Serial.println(WiFi.localIP());
+
+  randomSeed((millis()+10)*(analogRead(A0)+10));
+  
 }
 
 void callback(char* topic, byte* payload, unsigned int length) {
@@ -81,17 +90,28 @@ void callback(char* topic, byte* payload, unsigned int length) {
   }
   Serial.println();
 
-  if(topic != ARMED_TOPIC)
+  int pos=0;
+  bool equal = true;
+  while(topic[pos] != 0) {
+    if(topic[pos] != ARMED_TOPIC[pos])
+      equal = false;
+    pos++;
+  }
+  
+  if(!equal)
     return;
 
   if ((char)payload[0] == '1') {
     alarm_armed = true;
+
+    Serial.println("Armed");
     
     client.publish(ALARM_TOPIC, "1");
     
     digitalWrite(BUILTIN_LED, LOW);
     
   } else if((char)payload[0] == '0'){
+    Serial.println("Disarmed");
     alarm_armed = false;
     client.publish(ALARM_TOPIC, "0");
     digitalWrite(BUILTIN_LED, HIGH);
@@ -99,21 +119,42 @@ void callback(char* topic, byte* payload, unsigned int length) {
 
 }
 
+char randomString[16];
+
+void new_random_string() {
+  for(int i=5; i<15; i++) {
+    randomString[i] = random(48, 122);
+    if(randomString[i] == 96) //just to make sure its safe
+      randomString[i]++;
+  }
+  randomString[0] = 'b';
+  randomString[1] = 'o';
+  randomString[2] = 'a';
+  randomString[3] = 'r';
+  randomString[4] = 'd';
+  randomString[15] = 0;
+}
+
 void reconnect() {
   // Loop until we're reconnected
-  Serial.println("testing connection");
-  WiFiClient testClient;
-  const int httpPort = 27017;
-  if (!testClient.connect(mqtt_server, httpPort)) {
-    Serial.println("connection failed");
-    return;
-  }
-
-  Serial.println("connection ok");
+  
+//  Serial.println("testing connection");
+//  WiFiClient testClient;
+//  const int httpPort = 27017;
+//  if (!testClient.connect(mqtt_server, httpPort)) {
+//    Serial.println("connection failed");
+//    delay(500);
+//    return;
+//  }
+//
+//  Serial.println("connection ok");
   
   while (!client.connected()) {
+    new_random_string();
+    Serial.print("id: ");
+    Serial.println(randomString);
     Serial.print("Attempting MQTT connection...");
-    if (client.connect(MQTT_USERNAME, MQTT_USERNAME, MQTT_PASSWORD)) {
+    if (client.connect(randomString, MQTT_USERNAME, MQTT_PASSWORD)) {
       Serial.println("connected");
       client.subscribe(ARMED_TOPIC);
     } else {

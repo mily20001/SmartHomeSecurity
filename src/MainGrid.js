@@ -8,14 +8,13 @@ import Temperature from './tiles/Temperature';
 import DoorAndLock from "./tiles/DoorAndLock";
 import Motion from "./tiles/Motion";
 import Log from "./tiles/Log";
+import Header from "./Header";
 
 const ResponsiveReactGridLayout = WidthProvider(Responsive);
 
 export default class MainGrid extends React.Component {
     constructor() {
         super();
-
-        // localStorage.clear();
 
         const RESIZABLE_NOT_RESIZABLE = false;
         const layoutLg = [
@@ -60,6 +59,8 @@ export default class MainGrid extends React.Component {
                 md: layoutMd,
                 sm: layoutSm,
             },
+            dbStatus: 0,
+            mqttStatus: 0,
         };
         
         if (localStorage.getItem('layouts')) {
@@ -82,6 +83,7 @@ export default class MainGrid extends React.Component {
 
         this.client.on('connect', () => {
             console.log('connected');
+            this.setState({ mqttStatus: 1 });
             this.client.subscribe(`${constStrings.rootTopic}/main`);
             this.client.subscribe(`${constStrings.rootTopic}/alarm`);
             this.client.subscribe(`${constStrings.rootTopic}/light`);
@@ -120,8 +122,6 @@ export default class MainGrid extends React.Component {
             if(tmpLogArr.length > 100)
                 tmpLogArr.shift();
             this.setState({log: tmpLogArr});
-
-            // this.client.end()
         });
 
         this.client.on('error', function(err) {
@@ -202,7 +202,7 @@ export default class MainGrid extends React.Component {
                 throw err;
 
             console.log('Connected to db');
-
+            this.setState({ dbStatus: 1 });
             this.loadValuesFromDatabase(db, () => db.close());
 
         })
@@ -212,51 +212,50 @@ export default class MainGrid extends React.Component {
     render() {
         const rowHeight = 120;
         return (
-            <ResponsiveReactGridLayout
-                onLayoutChange={this.onLayoutChange}
-                onBreakpointChange={this.onBreakpointChange}
-                className="layout"
-                layouts={this.state.layouts}
-                rowHeight={rowHeight}
-                width={1200}
-                breakpoints={{lg: 900, md: 650, sm: 0}}
-                cols={{lg: 3, md: 2, sm: 1}}
-            >
-                <div key="arm_status">
-                    <ArmedStatus
-                        height={rowHeight}
-                        status={this.state.alarmStatus}
-                        setAlarmStatus={this.setAlarmStatus}
-                    />
-                </div>
-                <div key="motion_status">
-                    <Motion height={rowHeight*2+10} lastMotion={this.state.lastMotion} />
-                </div>
-                <div key="light_status">
-                    <LightStatus height={`${rowHeight}px`} status={this.state.lightStatus} />
-                </div>
-                <div key="log">
-                    <Log log={this.state.log} />
-                </div>
-                <div key="door&lock_status">
-                    <DoorAndLock
-                        height={rowHeight*2+10}
-                        doorStatus={this.state.doorStatus}
-                        lockStatus={this.state.lockStatus}
-                    />
-                </div>
-                <div key="temperature">
-                    <Temperature
-                        height={rowHeight*2+10}
-                        currentTemp={this.state.currentTemperature}
-                        tempHistory={this.state.temperatureHistory}
-                    />
-                </div>
-            </ResponsiveReactGridLayout>
+            <div>
+                <Header dbStatus={this.state.dbStatus} mqttStatus={this.state.mqttStatus} />
+                <ResponsiveReactGridLayout
+                    onLayoutChange={this.onLayoutChange}
+                    onBreakpointChange={this.onBreakpointChange}
+                    className="layout"
+                    layouts={this.state.layouts}
+                    rowHeight={rowHeight}
+                    width={1200}
+                    breakpoints={{lg: 900, md: 650, sm: 0}}
+                    cols={{lg: 3, md: 2, sm: 1}}
+                >
+                    <div key="arm_status">
+                        <ArmedStatus
+                            height={rowHeight}
+                            status={this.state.alarmStatus}
+                            setAlarmStatus={this.setAlarmStatus}
+                        />
+                    </div>
+                    <div key="motion_status">
+                        <Motion height={rowHeight*2+10} lastMotion={this.state.lastMotion} />
+                    </div>
+                    <div key="light_status">
+                        <LightStatus height={`${rowHeight}px`} status={this.state.lightStatus} />
+                    </div>
+                    <div key="log">
+                        <Log log={this.state.log} />
+                    </div>
+                    <div key="door&lock_status">
+                        <DoorAndLock
+                            height={rowHeight*2+10}
+                            doorStatus={this.state.doorStatus}
+                            lockStatus={this.state.lockStatus}
+                        />
+                    </div>
+                    <div key="temperature">
+                        <Temperature
+                            height={rowHeight*2+10}
+                            currentTemp={this.state.currentTemperature}
+                            tempHistory={this.state.temperatureHistory}
+                        />
+                    </div>
+                </ResponsiveReactGridLayout>
+            </div>
         );
     }
 }
-
-MainGrid.propTypes = {
-
-};

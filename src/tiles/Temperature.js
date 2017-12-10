@@ -12,7 +12,7 @@ export default class Temperature extends React.Component {
 
         this.tickFormatTime = (time) => {
             const d = new Date(time);
-            return `${d.getHours()}:${d.getMinutes()}`;
+            return `${d.getHours()}:${('0' + d.getMinutes()).slice(-2)}`;
         };
 
         return (

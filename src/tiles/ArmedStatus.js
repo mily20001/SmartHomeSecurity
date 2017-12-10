@@ -35,16 +35,6 @@ export default class ArmedStatus extends React.Component {
             2: {code: 'alarm', description: 'ALARM', icon: armedWarn},
         };
 
-        // () => this.props.setAlarmStatus('1')
-
-        // this.getTileContent(choosing) {
-        //     if(!choosing) {
-        //         return (
-        //
-        //         )
-        //     }
-        // }
-
         const isChoosing = this.state.choosing;
 
         return (

@@ -24,6 +24,7 @@
     "pack": "build --dir",
     "dist": "npm run build && build",
     "dist-win": "npm run build && build --win",
+    "dist-mac": "npm run build && build --mac",
     "postinstall": "install-app-deps"
   },
   "electron-dev": "ELECTRON_START_URL=http://localhost:3000 electron .",
